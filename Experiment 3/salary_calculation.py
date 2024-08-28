@@ -139,8 +139,8 @@ class ProcessData():
     
 
 if __name__ == '__main__':
-    ProcessData("datasetA.csv")
-    ProcessData("datasetB.csv")
-    ProcessData("datasetC.csv")
-    ProcessData("datasetD.csv")
-    ProcessData("datasetE.csv")
+    ProcessData("./Datasets/datasetA.csv")
+    ProcessData("./Datasets/datasetB.csv")
+    ProcessData("./Datasets/datasetC.csv")
+    ProcessData("./Datasets/datasetD.csv")
+    ProcessData("./Datasets/datasetE.csv")
