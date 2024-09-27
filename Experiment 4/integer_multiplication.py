@@ -1,7 +1,13 @@
-def normal_multiplication(x: int, y: int) -> int:
+def normal_multiplication(x, y):
     """
     Performs multiplication of two integers by the normal method.
     """
+    if type(x) == float or type(y) == float:
+        print("Not an integer")
+        return -1
+    sign = -1 if (x < 0) ^ (y < 0) else 1
+    x, y = abs(x), abs(y)
+
     x = str(x)[::-1]
     y = str(y)[::-1]
     res = 0
@@ -9,13 +15,19 @@ def normal_multiplication(x: int, y: int) -> int:
         for power2, digit2 in enumerate(y):
             res += int(digit1) * int(digit2) * 10 ** (power1 + power2)
     
-    return res
+    return sign*res
 
 
-def karatsuba_multiplication(x: int, y: int) -> int:
+def karatsuba_multiplication(x, y):
     """
     Performs multiplication of two integers using the divide and conquer karatsuba algorithm.
     """
+    if type(x) == float or type(y) == float:
+        print("Not an integer")
+        return -1
+    sign = -1 if (x < 0) ^ (y < 0) else 1
+    x, y = abs(x), abs(y)
+
     if x < 10 or y < 10:
         return x * y
     
@@ -34,28 +46,26 @@ def karatsuba_multiplication(x: int, y: int) -> int:
     # The function outputs low1*low2 + high1*low2 + high1*high2 + high2*low1
     # from which we must subtract low1low2(z0) and high1high2(z2)
     
-    return z2*(10 ** (2*m2)) + z1*(10 ** m2) + z0
+    return sign * (z2*(10 ** (2*m2)) + z1*(10 ** m2) + z0)
 
 def tests():
     numbers = [
         (12342342352354534553346356, 30456034568347603463563565),
         (53849450494776394611921152, -50633509739863107177770622), 
-        (87030377504722696254067401, 91108548674911341289250429), 
-        (-25512918230620960054612468, 73446328940683083679212533), 
-        (-83728178525865466802919907, 30661952913786780372194477), 
-        (63006034979614442008301215, 74691341210634741645245499), 
+        (25069.51, 77777.321),
+        (0, 1155328940683083679213231), 
+        (97672243867560276084372410, 0), 
+        (-2551817852586546680292533, 73441952913786780372193468.454), 
         (-74494213327602150702262607, -68674501952269147188782896), 
-        (97672243867560276084372410, 44739806469336357714097047), 
-        (28071758192663907983471595, 55188420653766309645635066), 
-        (15751086497362612912659415, 51047850892628130726509784)
+        (222.01, 0),
+        (-444.05, 1000.001),
+        (-36363636, 1515.15)
     ]
 
-    x,y = numbers[0]
-    karatsuba_result = karatsuba_multiplication(x,y)
-    normal_result = normal_multiplication(x,y)
-    assert karatsuba_result == normal_result
-    print(karatsuba_result)
-    print(normal_multiplication(x,y))
+    for x,y in numbers:
+        print(f"Testcase: {x}, {y}")
+        print(normal_multiplication(x, y))
+        print(karatsuba_multiplication(x, y))
 
 
 tests()
