@@ -1,4 +1,5 @@
 from collections import Counter
+import pandas as pd
 
 def count_inversions(arr):
     """Counts the number of inversions in an array."""
@@ -38,21 +39,15 @@ def inversions_course_codes(choices_students):
     for choices in choices_students:
         _, t = count_inversions(choices)
         inversions.append(t)
-    return Counter(inversions)      # Returns a dictionary with the count of inversions as keys and the number of students with that count as values
+    count = dict(sorted(Counter(inversions).items()))
+    # Creates a hashmap/dictionary with key as the inversion count and value as the number of students that have that count.
+    # Sorts the dictionary based on the inversion count.
+    return count   
 
 
-choices_students = [
-    [101, 102, 103, 104, 105, 106],
-    [101, 102, 103, 106, 105, 104],
-    [101, 102, 104, 105, 103, 106],
-    [101, 102, 104, 103, 105, 106],
-    [101, 102, 103, 104, 106, 105],
-    [101, 103, 104, 102, 105, 106],
-    [101, 102, 104, 106, 103, 105],
-    [102, 101, 103, 104, 105, 106],
-    [101, 104, 102, 103, 105, 106],
-    [101, 102, 104, 103, 106, 105],
-]
+df = pd.read_csv('course_choice.csv')
+student_ids = df['Student'].tolist()
+choices_students = df.drop(columns=['Student']).values.tolist()
 
 for k, v in inversions_course_codes(choices_students).items():
-    print(f"{v} students have {k} inversion count.")
+    print(f"{v:2d} students have {k:2d} inversion count.")
