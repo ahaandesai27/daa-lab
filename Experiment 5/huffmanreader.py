@@ -1,75 +1,99 @@
 import heapq
 from collections import Counter
 from PyPDF2 import PdfReader
-class HuffmanNode:
-    def __init__(self, char, freq):
-        self.char = char
-        self.freq = freq
-        self.left = None
-        self.right = None
 
-    def __lt__(self, other):
-        return self.freq < other.freq
+
+class Node:
+    def __init__(self, freq, symbol, left=None, right=None):
+        """
+        Initialize a node in the Huffman tree.
+        """
+        self.freq = freq
+        self.symbol = symbol
+        self.left = left
+        self.right = right
+        self.huff = ''
+
+    def __lt__(self, nxt):
+        """
+        Compare two nodes based on frequency.
+        """
+        return self.freq < nxt.freq
+
 
 class HuffmanTree:
     def __init__(self, data):
+        self.root = None
         self.data = data
-        self.frequency = Counter(self.data)
-        self.heap = []
-        self.codes = {}
-        self.reverse_codes = {}
+        self.mapping = {}
 
-    def create_priority_queue(self):
-        for char, freq in self.frequency.items():
-            node = HuffmanNode(char, freq)
-            heapq.heappush(self.heap, node)
+        self.frequencies = Counter(data)
+        self.huffman_encode(list(self.frequencies.keys()), list(self.frequencies.values()))
+        self.get_codes()
 
-    def build_huffman_tree(self):
-        while len(self.heap) > 1:
-            node1 = heapq.heappop(self.heap)
-            node2 = heapq.heappop(self.heap)
+    def huffman_encode(self, chars, freq):
+        """
+        Build the Huffman tree based on the character frequencies.
+        """
+        nodes = [Node(freq[x], chars[x]) for x in range(len(chars))]
+        heapq.heapify(nodes)
+        while len(nodes) > 1:
+            left = heapq.heappop(nodes)
+            right = heapq.heappop(nodes)
+            left.huff = 0
+            right.huff = 1
 
-            merged = HuffmanNode(None, node1.freq + node2.freq)
-            merged.left = node1
-            merged.right = node2
+            newNode = Node(left.freq + right.freq, left.symbol + right.symbol, left, right)
+            heapq.heappush(nodes, newNode)
 
-            heapq.heappush(self.heap, merged)
+        self.root = nodes[0]
 
-        return heapq.heappop(self.heap)
-
-    def generate_codes(self, node, current_code=""):
+    def get_codes(self, node=None, val=''):
+        """
+        Generate the Huffman codes for all characters.
+        """
         if node is None:
-            return
-
-        if node.char is not None:
-            self.codes[node.char] = current_code
-            self.reverse_codes[current_code] = node.char
-            return
-
-        self.generate_codes(node.left, current_code + "0")
-        self.generate_codes(node.right, current_code + "1")
+            node = self.root
+        newVal = val + str(node.huff)
+        if node.left:
+            self.get_codes(node.left, newVal)
+        if node.right:
+            self.get_codes(node.right, newVal)
+        if not node.left and not node.right:
+            self.mapping[node.symbol] = newVal
 
     def compress(self):
-        self.create_priority_queue()
-        root = self.build_huffman_tree()
-        self.generate_codes(root)
+        """
+        Compress the data using the generated Huffman codes.
+        """
+        res = ''
+        for char in self.data:
+            res += self.mapping[char]
+        return res
 
-        encoded_text = "".join([self.codes[char] for char in self.data])
-        return encoded_text
+    def decompress(self, string):
+        """
+        Decompress the given Huffman encoded string.
+        """
+        res = ''
+        node = self.root
+        for bit in string:
+            if bit == '0':
+                node = node.left
+            else:
+                node = node.right
 
-    def decompress(self, encoded_text):
-        current_code = ""
-        decoded_text = ""
+            if not node.left and not node.right:
+                res += node.symbol
+                node = self.root
 
-        for bit in encoded_text:
-            current_code += bit
-            if current_code in self.reverse_codes:
-                decoded_text += self.reverse_codes[current_code]
-                current_code = ""
+        return res
 
-        return decoded_text
 
 def compress_file(file):
+    """
+    Compress the contents of a given file using Huffman encoding.
+    """
     filename = file
     extension = file.split('.')[-1]
     if extension == 'pdf':
@@ -79,24 +103,24 @@ def compress_file(file):
             for page in reader.pages:
                 data += page.extract_text()
     else:
-        # Normal read 
         with open(file, 'r') as file:
             data = file.read()
-        
+
     huffman_generator = HuffmanTree(data)
-    original_data_length = len(data)*8      # As each ascii character is 8 bits
+    original_data_length = len(data) * 8
     encoded_data = huffman_generator.compress()
     encoded_data_length = len(encoded_data)
     decoded_data = huffman_generator.decompress(encoded_data)
 
-    assert data == decoded_data 
-    
-    print(f"Compression ratio for file {filename} is {round(original_data_length / encoded_data_length, 2)}. Document size reduced by {round((1 - encoded_data_length / original_data_length) * 100, 2)}%")
+    assert data == decoded_data
+
+    print(f"Compression ratio for file {filename} is {round(original_data_length / encoded_data_length, 2)}. "
+          f"Document size reduced by {round((1 - encoded_data_length / original_data_length) * 100, 2)}%")
 
 
 if __name__ == "__main__":
-   compress_file("Huffman Data/compression_text1.txt")
-   compress_file("Huffman Data/compression_text2.txt")
-   compress_file("Huffman Data/compression_text3.docx")
-   compress_file("Huffman Data/compression_text4.html")
-   compress_file("Huffman Data/compression_text5.pdf")
+    compress_file("Huffman Data/compression_text1.txt")
+    compress_file("Huffman Data/compression_text2.txt")
+    compress_file("Huffman Data/compression_text3.docx")
+    compress_file("Huffman Data/compression_text4.html")
+    compress_file("Huffman Data/compression_text5.pdf")

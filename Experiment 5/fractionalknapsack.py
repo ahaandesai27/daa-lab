@@ -13,6 +13,7 @@ class Item:
         )
     
 class Reader:
+    """Class to read csv file of items with value, weight and shelf life."""
     def __init__(self, file):
         self.df = pd.read_csv(file)
         self.weights = self.df['Weight'].to_list()
@@ -20,6 +21,7 @@ class Reader:
         self.shelf_lifes = self.df['Shelf Life'].to_list()
         
     def get_items_array(self):
+        """Converting items in dataframe to an array of tuples."""
         items = []
         for w, v, l in zip(self.weights,  self.values, self.shelf_lifes):
             items.append(Item(w, v, l))
@@ -27,6 +29,7 @@ class Reader:
         return items
 
 def fractional_knapsack(items, W):
+    """Implementation of knapsack algorithm to find maximum profit among items."""
     items.sort(reverse = True)
     total_value = 0
     for item in items:
