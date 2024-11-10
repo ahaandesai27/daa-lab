@@ -49,5 +49,7 @@ df = pd.read_csv('course_choice.csv')
 student_ids = df['Student'].tolist()
 choices_students = df.drop(columns=['Student']).values.tolist()
 
-for k, v in inversions_course_codes(choices_students).items():
-    print(f"{v:2d} students have {k:2d} inversion count.")
+# for k, v in inversions_course_codes(choices_students).items():
+#     print(f"{v:2d} students have {k:2d} inversion count.")
+
+print(merge_and_count_split_inversions([1,5,6,7], [1,2,3]))

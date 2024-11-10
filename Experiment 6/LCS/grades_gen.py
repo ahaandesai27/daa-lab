@@ -1,3 +1,4 @@
+# Generates testcases in file student_grades.csv
 import random
 import csv
 
