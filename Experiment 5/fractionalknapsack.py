@@ -37,8 +37,8 @@ def fractional_knapsack(items, W):
             W -= item.weight
             total_value += item.value
         else:
-            fraction = W / item.weight
-            total_value += item.value * fraction
+            fraction = item.value / item.weight
+            total_value += W * fraction
             break
     
     return round(total_value, 2)

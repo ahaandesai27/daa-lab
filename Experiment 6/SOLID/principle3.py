@@ -8,22 +8,22 @@ class Bird(ABC):
     @abstractmethod
     def fly(self):
         pass
-
+    
 class Sparrow(Bird):
     def fly(self):
-        print("Sparrow flying")
-
+        print("Sparrow flying.")
+        
 class Penguin(Bird):
     def fly(self):
-        raise NotImplementedError("Penguins can't fly!")
+        raise NotImplementedError("Penguins cant fly :/")
+# Usage
 
 def make_bird_fly(bird: Bird):
     try:
         bird.fly()
     except NotImplementedError as e:
         print(e)
-
-# Usage
+        
 sparrow = Sparrow()
 penguin = Penguin()
 make_bird_fly(sparrow)   

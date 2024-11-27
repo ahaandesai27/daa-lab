@@ -10,8 +10,13 @@ def matrix_chain_multiplication(N, arr):
         return -1, "Matrix dimensions must be positive"
 
     dp = [[0 for _ in range(N)] for _ in range(N)]
+    #? dp[i][j] represents the number of multiplications to multiply the chain from i to j
     split = [[0 for _ in range(N)] for _ in range(N)]
-
+    
+    #? Split represents the matrix at which the multiplication splits
+    #? For example if we have matrices (Ai, Ai+1...., Aj) and split[i][j] = k
+    #? Then it means the multiplication is (Ai, Ai+1,..Ak) * A(k+1, ... Aj) 
+    
     for L in range(2, N):
         for i in range(1, N - L + 1):
             j = i + L - 1
@@ -19,6 +24,14 @@ def matrix_chain_multiplication(N, arr):
             
             for k in range(i, j):
                 q = dp[i][k] + dp[k + 1][j] + arr[i - 1] * arr[k] * arr[j]
+                #? arr[i-1]*arr[k]*arr[j] is added because the left matrix chain (A(i-1 x i) x A(i+1 x i+2) x ... x A(k - 1 x k)) has dimensions (i-1, k)
+                #? and the right matrix  chain (A(k, k+1) x ... x A(j-1, j)) has dimensions (k, j), so total multiplications is arr[i-1]*arr[k]*arr[j]
+                #? A1 A2 A3 A4 -> (A1 x A2) x (A3 x A4)
+                #? Suppose k = 2 
+                #? i = 1 , j = 4
+                #? A1 : A(1x2), A2: (2x3)  -> Total 1x3 after split -> arr[i] x arr[k]
+                #? A3: A(3x4), A4: (4x5) -> total 3x5 after split -> arr[k] x arr[j]
+                #? [1,2,3,4,5]
                 if q < dp[i][j]:
                     dp[i][j] = q
                     split[i][j] = k
@@ -53,5 +66,6 @@ def tests():
     for tc in test_cases:
         print(matrix_chain_multiplication(len(tc), tc))
     
-tests()
+if __name__ == "__main__":
+    tests()
 

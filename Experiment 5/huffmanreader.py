@@ -1,7 +1,7 @@
 import heapq
 from collections import Counter
 from PyPDF2 import PdfReader
-from graphviz import Digraph
+from graphviz import Graph
 
 class Node:
     def __init__(self, freq, symbol, left=None, right=None):
@@ -73,20 +73,25 @@ class HuffmanTree:
     def plot_huffman_tree(self, node = None, graph=None, node_id=0):
         """Generate a visual representation of the Huffman Tree using graphviz."""
         if graph is None:
-            graph = Digraph(format='png')
+            graph = Graph(format="png")
         if node is None:
             node = self.root
+            
         if node is not None:
             node_label = f"Freq: {node.freq}"
-            if node.symbol is not None:
-                node_label = f"'{node.symbol}'\nFreq: {node.freq}"
+            if len(node.symbol) == 1:
+                node_label = f"{node.symbol}" + '\n' + node_label
+                
             graph.node(str(node_id), label=node_label)
+            
             if node.left:
-                graph.edge(str(node_id), str(node_id * 2 + 1), label="0")
-                self.plot_huffman_tree(node.left, graph, node_id * 2 + 1)
+                graph.edge(str(node_id), str(node_id * 2 + 1), label='0')
+                self.plot_huffman_tree(node.left, graph, node_id*2 + 1)
+                
             if node.right:
-                graph.edge(str(node_id), str(node_id * 2 + 2), label="1")
-                self.plot_huffman_tree(node.right, graph, node_id * 2 + 2)
+                graph.edge(str(node_id), str(node_id*2 + 2), label='1')
+                self.plot_huffman_tree(node.right, graph, node_id*2 + 2)
+        
         return graph
 
 def compress_file(file):
@@ -94,8 +99,8 @@ def compress_file(file):
     extension = file.split('.')[-1]
     if extension == 'pdf':
         with open(file, 'rb') as file:
-            reader = PdfReader(file)
             data = ''
+            reader = PdfReader(file)
             for page in reader.pages:
                 data += page.extract_text()
     else:
@@ -117,8 +122,8 @@ def compress_file(file):
     graph.render("Tree Output/huffmantree005")
 
 if __name__ == "__main__":
-    # compress_file("Huffman Data/compression_text1.txt")
-    compress_file("Huffman Data/compression_text2.txt")
+    compress_file("Huffman Data/compression_text1.txt")
+    # compress_file("Huffman Data/compression_text2.txt")
     # compress_file("Huffman Data/compression_text3.docx")
     # compress_file("Huffman Data/compression_text4.html")
     # compress_file("Huffman Data/compression_text5.pdf")

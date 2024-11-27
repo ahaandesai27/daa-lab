@@ -40,11 +40,10 @@ def lcs_n_strings(sequences):
         max_sequence = max(max_sequence, common_sequence, key=len)
     return max_sequence, 1
 
-def process_grades():
+def process_grades(student_grades):
     """
-    Reads the student grades from a CSV file and computes the longest common sequence among them.
+    Computes the longest common sequence of student grades from CSV file.
     """
-    student_grades = pandas.read_csv('student_grades.csv').fillna("").to_numpy()
     for grades in student_grades:
         grades = [grade for grade in grades if pandas.notna(grade) and grade != ""]
         if len(grades) == 0:
@@ -60,4 +59,7 @@ def process_grades():
         else:
             print(f"Error: {lcs_result}")
 
-process_grades()
+if __name__ == "__main__":
+    student_grades = pandas.read_csv('student_grades.csv').fillna("").to_numpy()
+    process_grades(student_grades)
+

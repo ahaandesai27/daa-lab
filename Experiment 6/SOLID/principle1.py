@@ -9,7 +9,7 @@ class OrderProcessor:
 
 class OrderRepository:
     def save(self, order):
-        print("Saving order to database:", order)
+        print("Saving order:", order)
 
 
 # Each class only has one responsibility - OrderProcessor processes orders and OrderRepository saves orders to the database.

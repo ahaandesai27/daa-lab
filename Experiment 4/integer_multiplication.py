@@ -8,13 +8,13 @@ def normal_multiplication(x, y):
     sign = -1 if (x < 0) ^ (y < 0) else 1
     x, y = abs(x), abs(y)
 
-    x = str(x)[::-1]
+    x = str(x)[::-1]     
     y = str(y)[::-1]
     res = 0
     for power1, digit1 in enumerate(x):
         for power2, digit2 in enumerate(y):
             res += int(digit1) * int(digit2) * 10 ** (power1 + power2)
-    
+
     return sign*res
 
 
@@ -27,22 +27,18 @@ def karatsuba_multiplication(x, y):
         return -1
     sign = -1 if (x < 0) ^ (y < 0) else 1
     x, y = abs(x), abs(y)
-
+    
     if x < 10 or y < 10:
-        return x * y
+        return x*y
+
+    m2 = min(len(str(x)), len(str(y))) // 2
     
-    m = min( 
-        len(str(x)), 
-        len(str(y)) 
-            )
-    m2 = m//2
-    
-    high1, low1 = divmod(x, 10**m2)         # Equivalent to splitting in the middle
+    high1, low1 = divmod(x, 10**m2)
     high2, low2 = divmod(y, 10**m2)
     
-    z0 = karatsuba_multiplication(low1, low2)
     z2 = karatsuba_multiplication(high1, high2)
-    z1 = karatsuba_multiplication(low1 + high1 , low2 + high2) - z2 - z0
+    z0 = karatsuba_multiplication(low1, low2)
+    z1 = karatsuba_multiplication(high1 + low1, high2 + low2) - z2 - z0
     # The function outputs low1*low2 + high1*low2 + high1*high2 + high2*low1
     # from which we must subtract low1low2(z0) and high1high2(z2)
     
@@ -50,6 +46,7 @@ def karatsuba_multiplication(x, y):
 
 def tests():
     numbers = [
+        (10,50),
         (12342342352354534553346356, 30456034568347603463563565),
         (53849450494776394611921152, -50633509739863107177770622), 
         (25069.51, 77777.321),

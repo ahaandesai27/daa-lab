@@ -17,6 +17,7 @@ def binary_search(arr, element, start, end):
     else:
         return binary_search(arr, element, mid + 1, end)
 
+
 def linear_search_test():
     """Run test cases for the linear search function."""
     testcases = [
